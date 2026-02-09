@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sarcastic Agent</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        input {
+            width: 70%;
+            padding: 0.5rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            margin-top: 1rem;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Sarcastic Agent</h1>
+    <input id="msg" placeholder="What should I roast?" />
+    <button onclick="send()">Send</button>
+
+    <pre id="out"></pre>
+
+    <script>
+        async function send() {
+            const out = document.getElementById("out");
+            out.innerText = "Thinking...";
+
+            let text = document.getElementById("msg").value;
+
+            try {
+                let res = await fetch("http://localhost:8000/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: text })
+                });
+
+                let data = await res.json();
+                if (data.error) {
+                    out.innerText = "Error: " + data.error;
+                } else {
+                    out.innerText = data.reply;
+                }
+            } catch (e) {
+                out.innerText = "Connection error. Is backend running?";
+            }
+        }
+    </script>
+</body>
+
+</html>
